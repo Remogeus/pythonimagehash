@@ -26,7 +26,8 @@ SOFTWARE.
 from scipy.fftpack import dct
 from PIL import Image
 
-import sys, getopt
+import sys
+import argparse
 import numpy as np
 
 def imgPrepare(filename):
@@ -94,27 +95,33 @@ def hamming2(s1,s2):
     return sum(c1 != c2 for c1, c2 in zip(s1,s2))
 
 if __name__=='__main__':
-    image1 = ''
-    image2 = ''
-    try:
-        opts, args = getopt.getopt(sys.argv[1:],"hf:s:",["fstimage=","sndimage="])
-    except getopt.GetoptError:
-        print('usage: imagehash.py -f <firstImage> -s <secondImage>')
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
-           print('usage: imagehash.py -f <firstImage> -s <secondImage>') 
-           sys.exit()
-        elif opt in ("-f","--fstimage"):
-           fstImage = arg
-        elif opt in ("-s", "--sndimage"):
-           sndImage = arg
-
-    imgHash1 = imgHashCreate(fstImage)
-    imgHash2 = imgHashCreate(sndImage)
-    print(fstImage, end = "\t", flush=True)
+    parser = argparse.ArgumentParser(
+        prog='imagehash',
+        description='The script creates hashes from two images and then '
+            'calculates their Hamming distance to measure diff'
+            'erence between them'
+            )
+    parser.add_argument(
+        'firstImage',
+        metavar = 'firstImage',
+        type = int,
+        nargs = 1,
+        help = 'first image to be processed'
+            )
+    parser.add_argument(
+        'secndImage',
+        metavar = 'secndImage',
+        type = int,
+        nargs = 1,
+        help = 'second image to be processed'
+            )
+    
+    args = parser.parse_args()
+    imgHash1 = imgHashCreate(args.firstImage)
+    imgHash2 = imgHashCreate(args.secndImage)
+    print(args.firstImage, end = "\t", flush=True)
     print(hex(int(imgHash1,2)), end = "\t", flush=True)
-    print(sndImage, end = "\t", flush=True)
+    print(args.secndImage, end = "\t", flush=True)
     print(hex(int(imgHash2,2)), end = "\t", flush=True)
     print(hamming2(imgHash1, imgHash2))
     
