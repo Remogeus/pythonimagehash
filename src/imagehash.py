@@ -32,10 +32,13 @@ import numpy as np
 def imgPrepare(filename):
     """ imgPrepare(filename)
         
-        Returns a numpy array created from grayscale 32x32 version of the image
-        Parameters: @filename - name of the image that should be returned
+        Returns a numpy array created from grayscale 32x32 version of the
+        image. Grayscaling is achieved by using the LA (grayscale with
+        alpha) mode from PIL and is done for simplifying the subsequent 
+        calculations (same with downscaling the images to 32x32 pixels)
 
-        Returns: numpy array
+        Parameters: @filename - string, name of the image that should be returned
+        Returns:    numpy array
     """
     image = Image.open(filename).convert('LA').resize((32,32))
     return np.asarray(image)
@@ -43,14 +46,25 @@ def imgPrepare(filename):
 def dct2d(arg):
     """ dct2d(arg)
 
-        Returns a result of 2D DCT (discrete cosine transform)
-        Parameters: @arg - numpy array used for calculation
+        Returns a result of 2D DCT (discrete cosine transform). DCT is simillar
+        to Fourier transform, but unlike DFT, results of DCT are always real
+        numbers and the transform only uses cosine function.
 
-        Returns: numpy array
+        Parameters: @arg - numpy array, argument used for calculation
+        Returns:    numpy array
     """
     return dct(dct(arg.T, norm='ortho').T, norm='ortho')
 
 def imgHashCreate(filename):
+    """imgHashCreate(filename)
+
+        Returns a hash created from an image using the pHash algorithm
+        (perceptual hashing) using DCT.
+
+        Parameters: @filename - string, name of the image from which 
+                    the hash is calculated
+        Returns:    string - 64 bit number
+    """
     imgArr = imgPrepare(filename)
     imgArr = imgArr[:, :, :1].transpose(2,0,1)
     imgArr = np.squeeze(imgArr)
@@ -67,6 +81,15 @@ def imgHashCreate(filename):
     return ''.join(map(str,imgHash))
     
 def hamming2(s1,s2):
+    """ hamming2(s1, s2)
+        Returns Hamming distance calculated from 2 binary numbers. Hamming
+        distance measures the minimum amount of substitutions required to
+        change one string to another string of equal lenght.
+
+        Parameters: @s1, @s2 - string, binary number representing (in this
+                    case) 2 hashes of 2 images
+        Returns:    integer - Hamming distance
+    """
     assert len(s1) == len(s2)
     return sum(c1 != c2 for c1, c2 in zip(s1,s2))
 
