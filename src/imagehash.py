@@ -29,6 +29,10 @@ from PIL import Image
 import sys
 import argparse
 import numpy as np
+import os
+
+
+local_folder = os.path.dirname(os.path.abspath(__file__))
 
 def imgPrepare(filename):
     """ imgPrepare(filename)
@@ -104,24 +108,22 @@ if __name__=='__main__':
     parser.add_argument(
         'firstImage',
         metavar = 'firstImage',
-        type = int,
         nargs = 1,
         help = 'first image to be processed'
             )
     parser.add_argument(
         'secndImage',
         metavar = 'secndImage',
-        type = int,
         nargs = 1,
         help = 'second image to be processed'
             )
     
     args = parser.parse_args()
-    imgHash1 = imgHashCreate(args.firstImage)
-    imgHash2 = imgHashCreate(args.secndImage)
-    print(args.firstImage, end = "\t", flush=True)
+    imgHash1 = imgHashCreate(os.path.join(local_folder, ''.join(args.firstImage)))
+    imgHash2 = imgHashCreate(os.path.join(local_folder, ''.join(args.secndImage)))
+    print(''.join(args.firstImage), end = "\t", flush=True)
     print(hex(int(imgHash1,2)), end = "\t", flush=True)
-    print(args.secndImage, end = "\t", flush=True)
+    print(''.join(args.secndImage), end = "\t", flush=True)
     print(hex(int(imgHash2,2)), end = "\t", flush=True)
     print(hamming2(imgHash1, imgHash2))
     
