@@ -71,8 +71,7 @@ def imgHashCreate(filename):
         Returns:    string - 64 bit number
     """
     imgArr = imgPrepare(filename)
-    imgArr = imgArr[:, :, :1].transpose(2,0,1)
-    imgArr = np.squeeze(imgArr)
+    imgArr = np.squeeze(imgArr[:, :, :1].transpose(2,0,1))
     imgDCT = dct2d(imgArr)
     imgDCT = imgDCT[:8,:8]
     imgDCTAvg = np.mean(imgDCT[1:,:])
@@ -81,8 +80,6 @@ def imgHashCreate(filename):
     for x in range(0,64):
         if imgDCT[x] > imgDCTAvg:
             imgHash[x] = 1
-        else:
-            imgHash[x] = 0
     return ''.join(map(str,imgHash))
     
 def hamming2(s1,s2):
